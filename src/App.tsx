@@ -15,7 +15,7 @@ function App() {
   const racers = useAppSelector((state) => state.racers.racers);
   const bottomRef = useRef(null);
   const racerRef = useRef(null);
-  const [shopRacer, setShowRacer] = useState(false);
+  const [showRacer, setShowRacer] = useState(true);
 
   useEffect(() => {
     const intersectionObserver = new IntersectionObserver((entries) => {
@@ -25,6 +25,27 @@ function App() {
     });
     intersectionObserver.observe(bottomRef.current);
   }, []);
+
+  const callback = (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        setShowRacer(true);
+      }
+    });
+  };
+
+  const options = {
+    threshold: 1.0,
+    root: null,
+    rootMargin: "0px",
+  };
+  useEffect(() => {
+    const observer = new IntersectionObserver(callback, options);
+    if (racerRef.current) observer.observe(racerRef.current);
+    return () => {
+      if (racerRef.current) observer.unobserve(racerRef.current);
+    };
+  }, [racerRef, options]);
 
   const handleListItemClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -42,6 +63,7 @@ function App() {
               selectedIndex={selectedIndex}
               handleListItemClick={handleListItemClick}
               index={index + 1}
+              showRacer={showRacer}
               ref={racerRef}
               {...racer}
             />
