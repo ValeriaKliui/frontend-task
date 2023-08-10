@@ -2,10 +2,9 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-}
-.ListItemButton {
-  background-color: black;
-}
-.ListItemButton.Mui-selected {
-  background-color: black;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
 }

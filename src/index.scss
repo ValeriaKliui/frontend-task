@@ -27,8 +27,6 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
 }
 
 h1 {
@@ -77,10 +75,8 @@ ul {
 
 .racer-enter {
   opacity: 0;
-  background-color: red;
 }
 .racer-enter-active {
   opacity: 1;
   transition: opacity 500ms ease-in;
-  background-color: black;
 }

@@ -1,35 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./App.scss";
 import { fetchRacers } from "./redux/services/fetchRacers";
 import { useAppDispatch, useAppSelector } from "./types/hooks";
-import { setCurrentPage } from "./redux/slices/racersSlice";
 import { TransitionGroup } from "react-transition-group";
 import { CSSTransition } from "react-transition-group";
 import { MyListItemButton } from "./components/my_UI-material/MyListItemButton";
+import { increaseCurrentPage } from "./redux/slices/racersSlice";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function App() {
   const dispatch = useAppDispatch();
-  const [shouldBeUpdated, setShouldBeUpdated] = useState(false);
   const currentPage = useAppSelector((state) => state.racers.currentPage);
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const [selectedIndex, setSelectedIndex] = useState(1);
   const racers = useAppSelector((state) => state.racers.racers);
+  const bottomRef = useRef(null);
+  const racerRef = useRef(null);
+  const [shopRacer, setShowRacer] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchRacers(1));
+    const intersectionObserver = new IntersectionObserver((entries) => {
+      if (entries[0].intersectionRatio <= 0) return;
+      dispatch(increaseCurrentPage());
+      dispatch(fetchRacers(currentPage));
+    });
+    intersectionObserver.observe(bottomRef.current);
   }, []);
-
-  const handleScroll = () => {
-    if (
-      Math.round(
-        document.documentElement.scrollHeight -
-          document.documentElement.clientHeight -
-          document.documentElement.scrollTop
-      ) < 300
-    ) {
-      dispatch(setCurrentPage(currentPage + 1));
-      setShouldBeUpdated(true);
-    } else setShouldBeUpdated(false);
-  };
 
   const handleListItemClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -38,24 +33,27 @@ function App() {
     setSelectedIndex(index);
   };
 
-  useEffect(() => {
-    document.addEventListener("scroll", handleScroll);
-    if (shouldBeUpdated) dispatch(fetchRacers(currentPage));
-    return () => document.removeEventListener("scroll", handleScroll);
-  }, [shouldBeUpdated]);
-
   return (
-    <TransitionGroup className="racers-list" component="ul">
-      {racers.map((racer) => (
-        <CSSTransition timeout={500} classNames="racer" key={racer.id}>
-          <MyListItemButton
-            selectedIndex={selectedIndex}
-            handleListItemClick={handleListItemClick}
-            {...racer}
-          />
-        </CSSTransition>
-      ))}
-    </TransitionGroup>
+    <>
+      <TransitionGroup className="racers-list" component="div">
+        {racers.map((racer, index) => (
+          <CSSTransition timeout={500} classNames="racer" key={racer.id}>
+            <MyListItemButton
+              selectedIndex={selectedIndex}
+              handleListItemClick={handleListItemClick}
+              index={index + 1}
+              ref={racerRef}
+              {...racer}
+            />
+          </CSSTransition>
+        ))}
+      </TransitionGroup>
+      <CircularProgress
+        color="secondary"
+        ref={bottomRef}
+        sx={{ "&&": { display: "block", justifyContent: "center" } }}
+      />
+    </>
   );
 }
 

@@ -8,8 +8,9 @@ export const fetchRacers = createAsyncThunk<
   {
     rejectValue: string;
   }
->("racers/fetchRacers", async (page, { rejectWithValue }) => {
-  const url = `https://fkvm5j-8080.csb.app/racers?_page=${page}&_limit=50`;
+>("racers/fetchRacers", async (page, { rejectWithValue, getState }) => {
+  const { racers } = getState();
+  const url = `https://fkvm5j-8080.csb.app/racers?_sort=time&_order=asc&_page=${racers.currentPage}&_limit=50`;
   const response = await axios.get<Racer[]>(url);
   if (!response) {
     return rejectWithValue("Server Error!");

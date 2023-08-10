@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
 import { fetchRacers } from "../services/fetchRacers";
 import { Racer } from "../../types";
 
@@ -13,15 +13,15 @@ const initialState: initialStateRacers = {
   racers: [],
   isLoading: undefined,
   error: undefined,
-  currentPage: 1,
+  currentPage: 0,
 };
 
 export const racersSlice = createSlice({
   name: "racers",
   initialState,
   reducers: {
-    setCurrentPage: (state, action: PayloadAction<number>) => {
-      state.currentPage = action.payload;
+    increaseCurrentPage: (state) => {
+      state.currentPage = state.currentPage + 1;
     },
   },
   extraReducers: (builder) => {
@@ -43,6 +43,6 @@ export const racersSlice = createSlice({
   },
 });
 
-export const { setCurrentPage } = racersSlice.actions;
+export const { increaseCurrentPage } = racersSlice.actions;
 
 export default racersSlice.reducer;
