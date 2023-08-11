@@ -4,16 +4,16 @@ import { Racer } from "../../types";
 
 interface initialStateRacers {
   racers: Racer[];
-  isLoading: true | false | undefined;
+  isLoading: true | false;
   error: string | undefined;
   currentPage: number;
 }
 
 const initialState: initialStateRacers = {
   racers: [],
-  isLoading: undefined,
+  isLoading: true,
   error: undefined,
-  currentPage: 0,
+  currentPage: 1,
 };
 
 export const racersSlice = createSlice({
@@ -26,9 +26,7 @@ export const racersSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchRacers.pending, (state) => {
-        state.isLoading = true;
-      })
+      .addCase(fetchRacers.pending, (state) => {})
       .addCase(
         fetchRacers.fulfilled,
         (state, action: PayloadAction<Racer[]>) => {
